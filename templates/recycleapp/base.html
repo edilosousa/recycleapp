@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body, html{
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <img src="{% static 'images/logo.png' %}" alt="Logo do IRecycle app" class="img-size-2"><br>
+                <span class="sp-red">I</span>Recycle
+                <span class="sp-green">system</span>
+            </div>
+        </div>
+        <hr class="hr-sidebar">
+        {% if usuario and usuario.user_parceiro %}
+            
+        {% else %}
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </div>
+            </div>
+            <hr class="hr-sidebar">
+        {% endif %}
+        <ul class="nav flex-column">
+            {% if usuario and usuario.user_parceiro %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/parceiro_coletor/' %}active{% endif %}" href="{% url 'parceiro_coletor' %}"><i class="fa-solid fa-handshake"></i>Parceiros</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/residuo/' %}active{% endif %}" href="{% url 'residuo' %}"><i class="fa-solid fa-recycle"></i>Resíduos Produzidos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/deposito/' %}active{% endif %}" href="{% url 'deposito' %}"><i class="fa-solid fa-box-archive"></i>Depósitos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/parceiro/' %}active{% endif %}" href="{% url 'parceiro' %}"><i class="fa-solid fa-handshake"></i>Parceiros</a>
+                </li>
+            {% endif %}
+            <div class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </ul>
+    </div>
+
+    <div class="content">
+        <nav class="navbar navbar-light header">
+            <a class="navbar-brand" href="#">
+                {% if request.path == '/dashboard/' %}<i class="fas fa-tachometer-alt icon-color"></i>{% endif %}
+                {% if request.path == '/residuo/' %}<i class="fa-solid fa-recycle icon-color"></i>{% endif %}
+                {% if request.path == '/deposito/' %}<i class="fa-solid fa-box-archive icon-color"></i>{% endif %}
+                {% if request.path == '/parceiro/' %}<i class="fa-solid fa-handshake icon-color"></i>{% endif %}
+                <span class="navbar-text">
+                    {% block header_title %}{% endblock %}
+                </span>
+            </a>
+            <span class="text-user-profile">Bem-vindo, {{ usuario.user_nome_fantasia }}</span>
+        </nav>
+        <div class="main mt-3">
+            {% block content %}
+            {% endblock %}
+        </div>
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</body>
+</html>

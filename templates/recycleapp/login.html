@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecycleApp - Login</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body style="background-color: #11253ae0;">
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+                <div class="login-card">
+                    <h2 class="text-center mb-4">
+                        <span class="sp-red">I</span>Recycle
+                        <span class="sp-green">system</span>
+                    </h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if messages %}
+                        <div class="alert alert-danger">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                        <div class="mb-3">
+                            {{ form.username.label_tag }}
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.username.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password.label_tag }}
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Entrar</button>
+                            <input type="hidden" name="form_type" value="login">
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Ainda não tem uma conta? <a href="#" data-bs-toggle="modal" data-bs-target="#cadastroModal">Cadastre-se aqui</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="cadastroModal" tabindex="-1" aria-labelledby="cadastroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cadastroModalLabel">Cadastro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cadastroForm">
+                        {% csrf_token %}
+                        {{ cadastro_form.user_cnpj.label_tag }} 
+                        {{ cadastro_form.user_cnpj }} 
+                        {% if cadastro_form.user_cnpj.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_cnpj.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.user_nome_fantasia.label_tag }} 
+                        {{ cadastro_form.user_nome_fantasia }} 
+                        {% if cadastro_form.user_nome_fantasia.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_nome_fantasia.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {{ cadastro_form.user_razao_social.label_tag }} 
+                        {{ cadastro_form.user_razao_social }} 
+                        {% if cadastro_form.user_razao_social.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_razao_social.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.user_endereco.label_tag }} 
+                        {{ cadastro_form.user_endereco }} 
+                        {% if cadastro_form.user_endereco.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_endereco.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.user_telefone.label_tag }} 
+                        {{ cadastro_form.user_telefone }} 
+                        {% if cadastro_form.user_telefone.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_telefone.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.user_email.label_tag }} 
+                        {{ cadastro_form.user_email }} 
+                        {% if cadastro_form.user_email.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_email.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {{ cadastro_form.user_login.label_tag }} 
+                        {{ cadastro_form.user_login }} 
+                        {% if cadastro_form.user_login.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_login.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.user_password.label_tag }} 
+                        {{ cadastro_form.user_password }} 
+                        {% if cadastro_form.user_password.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.user_password.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.confirme_senha.label_tag }} 
+                        {{ cadastro_form.confirme_senha }} 
+                        {% if cadastro_form.confirme_senha.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.confirme_senha.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        {{ cadastro_form.perfil.label_tag }} 
+                        {{ cadastro_form.perfil }} 
+                        {% if cadastro_form.perfil.errors %}
+                            <div class="text-danger">
+                                {% for error in cadastro_form.perfil.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Cadastrar</button>
+                            <input type="hidden" name="form_type" value="cadastro">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.onload = function() {
+            $('#cadastroForm').on('submit', function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'login' %}",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.status === 'error') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro',
+                                text: response.message,
+                                timer: 3000,
+                                toast: true,
+                                position: 'top-right',
+                                showConfirmButton: false,
+                                timerProgressBar: true
+                            });
+                        }else{
+                            $('#cadastroModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso',
+                                text: response.message,
+                                timer: 3000,
+                                toast: true,
+                                position: 'top-right',
+                                showConfirmButton: false,
+                                timerProgressBar: true
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#error-message').text('Ocorreu um erro ao adicionar o depósito.');
+                    }
+                });
+            });
+        };
+    </script>
+</body>
+</html>

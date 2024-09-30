@@ -1,0 +1,298 @@
+{% extends 'recycleapp/base.html' %}
+{% block title %}Depósito{% endblock %}
+{% block header_title %}Depósito{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header text-end">
+                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addDepositoModal">
+                    <i class="fa-solid fa-plus"></i>
+                    Depósitos
+                </button>
+            </div>
+            <div class="card-body full-height-card-body">
+                <table class="table table-hover" id="depositosTable">
+                    <thead>
+                        <th>Descrição</th>
+                        <th>Resíduo</th>
+                        <th class="text-center">Volume (dm³)</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {% for deposito in depositos %}
+                            <tr>
+                                <td>{{ deposito.deposito_descricao }}</td>
+                                <td>{{ deposito.residuo.residuo_descricao }}</td>
+                                <td class="text-center">{{ deposito.deposito_volume }}</td>
+                                <td>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-sm btn-info"
+                                        data-bs-toggle="modal" data-bs-target="#modalEdit{{deposito.deposito_id}}"
+                                        >Editar</button>
+                                        <button type="button" class="btn btn-sm btn-danger ml-2"
+                                        data-bs-toggle="modal" data-bs-target="#modalExcluir{{deposito.deposito_id}}"
+                                        >Excluir</button>
+                                    </div>
+                                    <div class="modal fade" id="modalEdit{{deposito.deposito_id}}" tabindex="-1" aria-labelledby="modalEdit1" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Depósito</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true"></span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="editDeposito{{deposito.deposito_id}}">
+                                                        {% csrf_token %}
+                                                        <div class="mb-3">
+                                                            <label for="id_deposito_descricao_{{ deposito.deposito_id }}">Descrição</label>
+                                                            <input type="text" class="form-control" id="id_deposito_descricao_{{ deposito.deposito_id }}" name="deposito_descricao" value="{{ deposito.deposito_descricao }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="id_residuo_{{ deposito.residuo }}">Resíduo</label>
+                                                            <select class="form-control" id="id_residuo_{{ deposito.residuo }}" name="residuo">
+                                                                <option value="0">Selecione um Resíduo</option>
+                                                                {% for residuo in residuos %}
+                                                                    <option value="{{ residuo.residuo_id }}" {% if deposito.residuo_id == residuo.residuo_id %}selected{% endif %}>
+                                                                        {{ residuo.residuo_descricao }}
+                                                                    </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="id_deposito_volume_{{ deposito.deposito_volume }}">Volume</label>
+                                                            <input type="text" class="form-control" id="id_deposito_volume_{{ deposito.deposito_volume }}" name="deposito_volume" value="{{ deposito.deposito_volume }}">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="hidden" name="deposito_id" value="{{ deposito.deposito_id }}">
+                                                            <button type="submit" id="btn-edit-deposito{{ deposito.deposito_id }}" class="btn btn-primary">Salvar alterações</button>
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-sm-12 text-center">
+                                                                <div class="alert alert-danger" style="display: none;" id="message-error-edit{{ deposito.deposito_id }}" role="alert">
+                                                                    
+                                                                </div>
+                                                                <div class="alert alert-success" style="display: none;" id="message-success-edit{{ deposito.deposito_id }}" role="alert">
+                                                                   
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="modalExcluir{{deposito.deposito_id}}" tabindex="-1" aria-labelledby="modalExcluir1" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Depósito</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true"></span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Deseja excluir realmente o depósito {{deposito.deposito_descricao}} ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form id="deleteDeposito{{deposito.deposito_id}}">
+                                                        {% csrf_token %}
+                                                            <input type="hidden" name="deposito_id" value="{{ deposito.deposito_id }}">
+                                                            <button type="submit" id="btn-excluir-deposito{{ deposito.deposito_id }}" class="btn btn-danger">Excluir?</button>
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                    </form>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-sm-12 text-center">
+                                                        <div class="alert alert-danger" style="display: none; margin-left: 10px; margin-right: 10px; " id="message-error-delete{{ deposito.deposito_id }}" role="alert">
+                                                        </div>
+                                                        <div class="alert alert-success" style="display: none; margin-left: 10px; margin-right: 10px; " id="message-success-delete{{ deposito.deposito_id }}" role="alert">
+                                                           
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                <script>
+                                    $("#editDeposito{{deposito.deposito_id}}").on('submit', function (event) {
+                                        event.preventDefault();
+                                        $("#btn-edit-deposito{{ deposito.deposito_id }}").attr('disabled', true);
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: "{% url 'edit_deposito' %}",
+                                            data: $(this).serialize(),
+                                            success: function(response) {
+                                                if (response.status === 'error') {
+                                                    $("#message-error-edit{{ deposito.deposito_id }}").css('display','block');
+                                                    $("#message-error-edit{{ deposito.deposito_id }}").html(response.message);
+                                                    $("#btn-edit-residuo{{ deposito.deposito_id }}").attr('disabled', false);
+                                                }else{
+                                                    
+                                                    $("#message-success-edit{{ deposito.deposito_id }}").css('display','block');
+                                                    $("#message-success-edit{{ deposito.deposito_id }}").html(response.message);
+                                                    setTimeout(()=>{
+                                                        location.reload();
+                                                    },2000)
+                                                }
+                                            },
+                                            error: function(xhr) {
+                                                $("#message-error").html(response.message);
+                                            }
+                                        });
+                                    });
+                                    $("#deleteDeposito{{deposito.deposito_id}}").on('submit', function (event) {
+                                        event.preventDefault();
+                                        $("#btn-excluir-deposito{{ deposito.deposito_id }}").attr('disabled', true);
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: "{% url 'delete_deposito' %}",
+                                            data: $(this).serialize(),
+                                            success: function(response) {
+                                                if (response.status === 'error') {
+                                                    $("#message-error-delete{{ deposito.deposito_id }}").css('display','block');
+                                                    $("#message-error-delete{{ deposito.deposito_id }}").html(response.message);
+                                                    $("#btn-excluir-deposito{{ deposito.deposito_id }}").attr('disabled', false);
+                                                }else{
+                                                    
+                                                    $("#message-success-delete{{ deposito.deposito_id }}").css('display','block');
+                                                    $("#message-success-delete{{ deposito.deposito_id }}").html(response.message);
+                                                    setTimeout(()=>{
+                                                        location.reload();
+                                                    },2000)
+                                                }
+                                            },
+                                            error: function(xhr) {
+                                                $("#message-error").html(response.message);
+                                            }
+                                        });
+                                    });
+                                </script>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-end">
+                <span>IRecycle system</span>
+            </div>
+        </div>
+    </div>
+    <!-- Modal add Depósitos -->
+    <div class="modal fade" id="addDepositoModal" tabindex="-1" aria-labelledby="addDepositoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="addDepositoModalLabel">Adicionar Depósito</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="depositoForm">
+                    {% csrf_token %}
+                    <!-- {{ form.as_p }} -->
+                    <div class="mb-3">
+                        <label for="id_deposito_descricao">Descrição</label>
+                        <input type="text" class="form-control" id="id_deposito_descricao" required name="deposito_descricao" value="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_residuo">Resíduo</label>
+                        <select class="form-control" id="id_residuo" name="residuo" required>
+                            <option value="0">Selecione um Resíduo</option>
+                            {% for residuo in residuos %}
+                                <option value="{{ residuo.residuo_id }}">
+                                    {{ residuo.residuo_descricao }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_deposito_volume">Volume</label>
+                        <input type="text" class="form-control" id="id_deposito_volume" name="deposito_volume" value="">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-12 text-center">
+                            <div id="error-message" class="text-danger"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        var tabela = document.getElementById('depositosTable');
+        if (tabela) {
+            console.log('Tabela encontrada, pronto para inicializar.');
+            $(document).ready(function() {
+        $('#depositosTable').DataTable({
+            "paging": true, // Paginação
+            "searching": true, // Campo de busca
+            "ordering": true, // Ordenação
+            "info": true, // Informação no rodapé
+            "language": {
+                "sEmptyTable": "Nenhum dado disponível na tabela",
+                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ depósitos",
+                "sInfoEmpty": "Mostrando 0 até 0 de 0 depósitos",
+                "sInfoFiltered": "(filtrado de _MAX_ entradas totais)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "Mostrar _MENU_ depósitos",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sSearch": "Pesquisar:",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "oPaginate": {
+                    "sFirst": "Primeira",
+                    "sLast": "Última",
+                    "sNext": "Próxima",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": ativar para classificar a coluna em ordem crescente",
+                    "sSortDescending": ": ativar para classificar a coluna em ordem decrescente"
+                }
+            },
+            "buttons": [
+                'copy', 'excel', 'pdf'
+            ],
+            "layout": {
+                "topStart": 'buttons'
+            }
+        });
+    });
+        }
+    
+        $('#depositoForm').on('submit', function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_deposito' %}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.status === 'error') {
+                        $("#error-message").html(response.message+" o ideal seria no minímo: "+response.volume_necessario+" dm³");
+                    }else{
+                        location.reload();
+                    }
+                },
+                error: function(xhr) {
+                    $('#error-message').text('Ocorreu um erro ao adicionar o depósito.');
+                }
+            });
+        });
+    };
+</script>
+{% endblock %}

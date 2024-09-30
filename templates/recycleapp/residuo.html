@@ -1,0 +1,301 @@
+{% extends 'recycleapp/base.html' %}
+{% block title %}Resíduo{% endblock %}
+{% block header_title %}Resíduo{% endblock %}
+
+{% block content %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header text-end">
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addResiduoModal">
+                            <i class="fa-solid fa-plus"></i>
+                            Resíduos
+                        </button>
+                    </div>
+                    <div class="card-body full-height-card-body">
+                        <table class="tables stripe" id="residuosTable">
+                            <thead>
+                                <th>Descrição</th>
+                                <th>Fórmula Química</th>
+                                <th>Categoria</th>
+                                <th class="text-center">Massa (KG)</th>
+                                <th class="text-center">Densidade (kg/dm³)</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                {% for residuo in residuos%}
+                                <tr>
+                                    <td>{{residuo.residuo_descricao}}</td>
+                                    <td>{{residuo.residuo_formula_quimica}}</td>
+                                    <td>{{residuo.residuo_categoria}}</td>
+                                    <td class="text-center">{{residuo.residuo_massa}}</td>
+                                    <td class="text-center">{{residuo.residuo_densidade}}</td>
+                                    <td>
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-sm btn-info"
+                                            data-bs-toggle="modal" data-bs-target="#modalEdit{{residuo.residuo_id}}"
+                                            >Editar</button>
+                                            <button type="button" class="btn btn-sm btn-danger ml-2"
+                                            data-bs-toggle="modal" data-bs-target="#modalExcluir{{residuo.residuo_id}}"
+                                            >Excluir</button>
+                                        </div>
+                                        <div class="modal fade" id="modalEdit{{residuo.residuo_id}}" tabindex="-1" aria-labelledby="modalEdit1" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Resíduo</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="editResiduo{{residuo.residuo_id}}">
+                                                            {% csrf_token %}
+                                                            <div class="mb-3">
+                                                                <label for="id_residuo_descricao_{{ residuo.residuo_id }}">Descrição</label>
+                                                                <input type="text" class="form-control" id="id_residuo_descricao_{{ residuo.residuo_id }}" name="residuo_descricao" value="{{ residuo.residuo_descricao }}">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="id_residuo_formula_quimica_{{ residuo.residuo_id }}">Fórmula Química</label>
+                                                                <input type="text" class="form-control" id="id_residuo_formula_quimica_{{ residuo.residuo_id }}" name="residuo_formula_quimica" value="{{ residuo.residuo_formula_quimica }}">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="id_residuo_categoria_{{ residuo.residuo_id }}">Categoria</label>
+                                                                <select class="form-control" id="id_residuo_categoria_{{ residuo.residuo_id }}" name="residuo_categoria">
+                                                                    <option value="0">Selecione uma categoria</option>
+                                                                    <option value="Metal" {% if residuo.residuo_categoria == 'Metal' %}selected{% endif %}>Metal</option>
+                                                                    <option value="Papel" {% if residuo.residuo_categoria == 'Papel' %}selected{% endif %}>Papel</option>
+                                                                    <option value="Plástico" {% if residuo.residuo_categoria == 'Plástico' %}selected{% endif %}>Plástico</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="id_residuo_massa_{{ residuo.residuo_massa }}">Massa (kg)</label>
+                                                                <input type="number" step="0.001" class="form-control" id="id_residuo_massa_{{ residuo.residuo_id }}" name="residuo_massa" value="{{ residuo.residuo_massa }}">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="id_residuo_massa_{{ residuo.residuo_densidade }}">Densidade (kg/dm³)</label>
+                                                                <input type="number" step="0.001" class="form-control" id="id_residuo_densidade_{{ residuo.residuo_id }}" name="residuo_densidade" value="{{ residuo.residuo_densidade }}">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <input type="hidden" name="residuo_id" value="{{ residuo.residuo_id }}">
+                                                                <button type="submit" id="btn-edit-residuo{{ residuo.residuo_id }}" class="btn btn-primary">Salvar alterações</button>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                            </div>
+                                                            <div class="row mt-2">
+                                                                <div class="col-sm-12 text-center">
+                                                                    <div class="alert alert-danger" style="display: none;" id="message-error-edit{{ residuo.residuo_id }}" role="alert">
+                                                                        
+                                                                    </div>
+                                                                    <div class="alert alert-success" style="display: none;" id="message-success-edit{{ residuo.residuo_id }}" role="alert">
+                                                                       
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="modalExcluir{{residuo.residuo_id}}" tabindex="-1" aria-labelledby="modalExcluir1" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Resíduo</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Deseja excluir realmente o resíduo {{residuo.residuo_descricao}} ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <form id="deleteResiduo{{residuo.residuo_id}}">
+                                                            {% csrf_token %}
+                                                                <input type="hidden" name="residuo_id" value="{{ residuo.residuo_id }}">
+                                                                <button type="submit" id="btn-excluir-residuo{{ residuo.residuo_id }}" class="btn btn-danger">Excluir?</button>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="row mt-2">
+                                                        <div class="col-sm-12 text-center">
+                                                            <div class="alert alert-danger" style="display: none; margin-left: 10px; margin-right: 10px; " id="message-error-delete{{ residuo.residuo_id }}" role="alert">
+                                                            </div>
+                                                            <div class="alert alert-success" style="display: none; margin-left: 10px; margin-right: 10px; " id="message-success-delete{{ residuo.residuo_id }}" role="alert">
+                                                               
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                <script>
+                                    $("#editResiduo{{residuo.residuo_id}}").on('submit', function (event) {
+                                        event.preventDefault();
+                                        $("#btn-edit-residuo{{ residuo.residuo_id }}").attr('disabled', true);
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: "{% url 'edit_residuo' %}",
+                                            data: $(this).serialize(),
+                                            success: function(response) {
+                                                if (response.status === 'error') {
+                                                    $("#message-error-edit{{ residuo.residuo_id }}").css('display','block');
+                                                    $("#message-error-edit{{ residuo.residuo_id }}").html(response.message);
+                                                    $("#btn-edit-residuo{{ residuo.residuo_id }}").attr('disabled', false);
+                                                }else{
+                                                    
+                                                    $("#message-success-edit{{ residuo.residuo_id }}").css('display','block');
+                                                    $("#message-success-edit{{ residuo.residuo_id }}").html(response.message);
+                                                    setTimeout(()=>{
+                                                        location.reload();
+                                                    },2000)
+                                                }
+                                            },
+                                            error: function(xhr) {
+                                                $("#message-error").html(response.message);
+                                            }
+                                        });
+                                    });
+                                    $("#deleteResiduo{{residuo.residuo_id}}").on('submit', function (event) {
+                                        event.preventDefault();
+                                        $("#btn-excluir-residuo{{ residuo.residuo_id }}").attr('disabled', true);
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: "{% url 'delete_residuo' %}",
+                                            data: $(this).serialize(),
+                                            success: function(response) {
+                                                if (response.status === 'error') {
+                                                    $("#message-error-delete{{ residuo.residuo_id }}").css('display','block');
+                                                    $("#message-error-delete{{ residuo.residuo_id }}").html(response.message);
+                                                    $("#btn-excluir-residuo{{ residuo.residuo_id }}").attr('disabled', false);
+                                                }else{
+                                                    
+                                                    $("#message-success-delete{{ residuo.residuo_id }}").css('display','block');
+                                                    $("#message-success-delete{{ residuo.residuo_id }}").html(response.message);
+                                                    setTimeout(()=>{
+                                                        location.reload();
+                                                    },2000)
+                                                }
+                                            },
+                                            error: function(xhr) {
+                                                $("#message-error").html(response.message);
+                                            }
+                                        });
+                                    });
+                                </script>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer text-end">
+                        <span>IRecycle system</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal add Residuos -->
+            <div class="modal fade" id="addResiduoModal" tabindex="-1" aria-labelledby="addResiduoModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="addResiduoModalLabel">Adicionar Resíduo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="cadastroResiduo">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="submit" id="btn-save-residuo" class="btn btn-primary">Salvar</button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-12 text-center">
+                                    <div class="alert alert-danger" style="display: none;" id="message-error" role="alert">
+                                        
+                                    </div>
+                                    <div class="alert alert-success" style="display: none;" id="message-success" role="alert">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+<script>
+    window.onload = function() {
+        var tabela = document.getElementById('residuosTable');
+        if (tabela) {
+            console.log('Tabela encontrada, pronto para inicializar.');
+            $(document).ready(function() {
+                $('#residuosTable').DataTable({
+                    "paging": true, // Paginação
+                    "searching": true, // Campo de busca
+                    "ordering": true, // Ordenação
+                    "info": true, // Informação no rodapé
+                    "language": {
+                        "sEmptyTable": "Nenhum dado disponível na tabela",
+                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ resíduos",
+                        "sInfoEmpty": "Mostrando 0 até 0 de 0 resíduos",
+                        "sInfoFiltered": "(filtrado de _MAX_ entradas totais)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "Mostrar _MENU_ resíduos",
+                        "sLoadingRecords": "Carregando...",
+                        "sProcessing": "Processando...",
+                        "sSearch": "Pesquisar:",
+                        "sZeroRecords": "Nenhum registro encontrado",
+                        "oPaginate": {
+                            "sFirst": "Primeira",
+                            "sLast": "Última",
+                            "sNext": "Próxima",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": ativar para classificar a coluna em ordem crescente",
+                            "sSortDescending": ": ativar para classificar a coluna em ordem decrescente"
+                        }
+                    },
+                    "buttons": [
+                        'copy', 'excel', 'pdf'
+                    ],
+                    "layout": {
+                        "topStart": 'buttons'
+                    }
+                });
+            });
+        }
+        $('#cadastroResiduo').on('submit', function (event) {
+                $("#btn-save-residuo").attr('disabled', true);
+                event.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'add_residuo' %}",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.status === 'error') {
+                            $("#message-error").css('display','block');
+                            $("#message-error").html(response.message);
+                            $("#btn-save-residuo").attr('disabled', false);
+                        }else{
+                            
+                            $("#message-success").css('display','block');
+                            $("#message-success").html(response.message);
+                            setTimeout(()=>{
+                                location.reload();
+                            },2000)
+                        }
+                    },
+                    error: function(xhr) {
+                        $("#message-error").html(response.message);
+                    }
+                });
+            });
+    };
+            </script>
+{% endblock %}

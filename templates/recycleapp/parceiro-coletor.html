@@ -1,0 +1,178 @@
+{% extends 'recycleapp/base.html' %}
+{% block title %}Parceiro{% endblock %}
+{% block header_title %}Parceiros{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <label>Parceiros</label>
+            </div>
+            <div class="card-body full-height-card-body">
+                <table class="table table-hover" id="depositosTable">
+                    <thead>
+                        <th>CNPJ</th>
+                        <th>Nome Fantasia</th>
+                        <th>Endereço</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {% for produtor in produtores_residuos %}
+                        <tr>
+                            <td>{{ produtor.user_cnpj }}</td>
+                            <td>{{ produtor.user_nome_fantasia }}</td>
+                            <td>{{ produtor.user_endereco }}</td>
+                            <td>{{ produtor.user_telefone }}</td>
+                            <td>{{ produtor.user_email }}</td>
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" 
+                                    data-bs-target="#residuosModal{{produtor.user_id}}">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </button>
+                                </div>
+                                <div class="modal fade" id="residuosModal{{produtor.user_id}}" tabindex="-1" aria-labelledby="residuosModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="residuosModalLabel">{{produtor.user_razao_social}}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <label for="">CNPJ: {{produtor.user_cnpj}}</label>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label for="">Contato: {{produtor.user_telefone}}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-sm-12">
+                                                        <label for="">Endereço: {{produtor.user_endereco}}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-sm-12">
+                                                        <label for="">Email: {{produtor.user_email}}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="card mt-5">
+                                                    <div class="card-header">
+                                                        <label for="">Resíduos produzidos</label>
+                                                    </div>
+                                                    <form id="solicitacaoForm{{produtor.user_id}}">
+                                                        <div class="card-body">
+                                                            {% csrf_token %}
+                                                                <table class="table">
+                                                                    <thead>
+                                                                        <th></th>
+                                                                        <th>Descrição</th>
+                                                                        <th>Fórmula Química</th>
+                                                                        <th>Categoria</th>
+                                                                        <th>Status do Aceite</th>
+                                                                    </thead>
+                                                                    <tbody id="residuosTableBody">
+                                                                        {% for residuo in produtor.residuos_fabricados %}
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <input type="checkbox" name="residuos_selecionados" value="{{ residuo.residuo_id }}">
+                                                                                </td>
+                                                                                <td>{{ residuo.residuo_descricao }}</td>
+                                                                                <td>{{ residuo.residuo_formula_quimica }}</td>
+                                                                                <td>{{ residuo.residuo_categoria}}</td>
+                                                                                <td class="text-center">
+                                                                                    {% for solicitacao in produtor.solicitacoes_geradas %}
+                                                                                        {% if solicitacao.residuo_id == residuo.residuo_id %}
+                                                                                            {% if solicitacao.solicitacao_aceite == 1 and solicitacao.user_parceiro_id == usuario.user_id %}
+                                                                                                <span class="badge bg-success text-white">Aceito</span>
+                                                                                            {% elif solicitacao.solicitacao_aceite == 3 and solicitacao.user_parceiro_id == usuario.user_id %}
+                                                                                                <span class="badge bg-danger text-white">Negado</span>
+                                                                                            {% elif solicitacao.solicitacao_aceite == 2 and solicitacao.user_parceiro_id == usuario.user_id %}
+                                                                                                <span class="badge bg-warning text-white">Pendente</span>
+                                                                                            {% else %}
+                                                                                            {% endif %}
+                                                                                        {% endif %}
+                                                                                    {% endfor %}
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% empty %}
+                                                                            <tr>
+                                                                                <td colspan="5">Nenhum resíduo encontrado.</td>
+                                                                            </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                    
+                                                                </table>
+                                                        </div>
+                                                        <div class="card-footer text-end">
+                                                            <button type="submit" id="btn-save-solicitacao{{produtor.user_id}}" class="btn btn-block btn-success">Solicitar convite</button>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-sm-12 text-center">
+                                                                <div class="alert alert-danger" style="display: none; margin-left: 10px; margin-right: 10px; " id="message-error{{ produtor.user_id }}" role="alert">
+                                                                </div>
+                                                                <div class="alert alert-success" style="display: none; margin-left: 10px; margin-right: 10px; " id="message-success{{ produtor.user_id }}" role="alert">
+                                                                   
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                                    <script>
+                                                        $('#solicitacaoForm{{produtor.user_id}}').on('submit', function (event) {
+                                                            event.preventDefault();
+                                                            $("#btn-save-solicitacao{{produtor.user_id}}").attr('disabled', true);
+                                                            $.ajax({
+                                                                type: 'POST',
+                                                                url: "{% url 'salvar_solicitacao' %}", 
+                                                                data: $(this).serialize(),
+                                                                success: function(response) {
+                                                                    if (response.status === 'error') {
+                                                                        let errorMessages = response.errors.map((error) => `<p>${error}</p>`).join('');  // Concatena todas as mensagens de erro
+                                                                        $("#message-error{{produtor.user_id}}").css('display', 'block');
+                                                                        $("#message-error{{produtor.user_id}}").html(errorMessages);
+                                                                        $("#btn-save-solicitacao{{produtor.user_id}}").attr('disabled', false);
+                                                                    } else {
+                                                                        let successMessages = response.messages.map((msg) => `<p>${msg}</p>`).join('');  // Concatena todas as mensagens de sucesso
+                                                                        $("#message-success{{produtor.user_id}}").css('display', 'block');
+                                                                        $("#message-success{{produtor.user_id}}").html(successMessages);
+                                                                        setTimeout(() => {
+                                                                            location.reload();
+                                                                        }, 2000);
+                                                                    }
+                                                                },
+                                                                error: function(xhr) {
+                                                                    // Lida com erros, exibe mensagem genérica de erro
+                                                                    $('#error-message').text('Ocorreu um erro ao enviar a solicitação.');
+                                                                }
+                                                            });
+                                                        });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">Nenhum produtor de resíduos encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-end">
+                <span>IRecycle system</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+{% endblock %}

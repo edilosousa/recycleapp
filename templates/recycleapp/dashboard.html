@@ -1,0 +1,142 @@
+{% extends 'recycleapp/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% for chave, valor in total_massa.items %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header
+                                    {% if chave == 'Plástico' %}
+                                        bg-danger
+                                    {% elif chave == 'Metal' %}
+                                        bg-secondary
+                                    {% elif chave == 'Papel' %}
+                                        bg-primary
+                                    {% endif %}
+                                    text-white">
+                            {% if chave == 'Plástico' %}
+                                <i class="fa-solid  fa-recycle" style="font-size: 20px;"></i>
+                            {% elif chave == 'Metal' %}
+                                <i class="fa-solid  fa-cogs" style="font-size: 20px;"></i>
+                            {% elif chave == 'Papel' %}
+                                <i class="fa-solid  fa-file-alt" style="font-size: 20px;"></i>
+                            {% endif %}
+                            {{ chave }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Total de Massa: {{ valor }} kg</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row mt-2">
+            {% for deposito in depositos %}
+                <div class="col-md-4">
+                    <div class="card mt-5">
+                        <div class="card-header bg-info text-white">
+                            <i class="fa-solid fa-box-archive" style="font-size: 20px;"></i> {{ deposito }}
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">{{ deposito.residuo.residuo_descricao }}</div>
+                                <div class="col-sm-12">Massa: {{ deposito.residuo.residuo_massa }} KG</div>
+                                <div class="col-sm-12">Volume: {{ deposito.residuo.residuo_densidade }} dm³</div>
+                                <div class="col-sm-12" id="porcentagem-restante">
+                                    <label for="">Nível: {{ deposito.porcentagem_restante }}% da capacidade total</label>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ deposito.porcentagem_restante }}%" aria-valuenow="{{ deposito.porcentagem_restante }}" aria-valuemin="0" aria-valuemax="100">
+                                            {{ deposito.porcentagem_restante }}%
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Gráfico de Barras -->
+        <div class="row mt-5">
+            <div class="col-sm-6">
+                <canvas id="massChart"></canvas>
+            </div>
+            <div class="col-sm-6">
+                <canvas id="monthlyMassChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        var ctx = document.getElementById('massChart').getContext('2d');
+        var massChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Papel', 'Metal', 'Plástico'],
+                datasets: [{
+                    label: 'Massa por Categoria (kg)',
+                    data: [
+                        {{ total_massa.Papel }},
+                        {{ total_massa.Metal }},
+                        {{ total_massa.Plástico }}
+                    ],
+                    backgroundColor: [
+                        'rgba(0, 123, 255, 0.7)',  // Cor para Papel
+                        'rgba(108, 117, 125, 0.7)',  // Cor para Metal
+                        'rgba(220, 53, 69, 0.7)'   // Cor para Plástico
+                    ],
+                    borderColor: [
+                        'rgba(0, 123, 255, 1)',
+                        'rgba(108, 117, 125, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        // Gráfico de Linha
+        var monthlyMassCtx = document.getElementById('monthlyMassChart').getContext('2d');
+        
+        var monthlyMassChart = new Chart(monthlyMassCtx, {
+            type: 'line',
+            data: {
+                labels: [
+                    {% for mes in massa_por_mes.keys %}
+                        '{{ mes }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Massa de Resíduos por Mês (kg)',
+                    data: [
+                        {% for massa in massa_por_mes.values %}
+                            {{ massa }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Cor para a linha
+                    borderColor: 'rgba(75, 192, 192, 1)',  // Cor da borda
+                    borderWidth: 2,
+                    fill: true,  // Preenche a área abaixo da linha
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

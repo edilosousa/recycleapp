@@ -1,0 +1,119 @@
+body {
+    background-color: #f8f9fa;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+    /* align-items: center; */
+}
+.full-height {
+    min-height: 90vh !important; /* Ajusta a altura para 90% da tela */
+}
+
+.full-height-card-body {
+    height: auto; /* Faz o card-body ocupar todo o espaço do card */
+    overflow-y: auto; /* Adiciona rolagem vertical se o conteúdo ultrapassar a tela */
+}
+.main{
+    margin-left: 1%;
+    padding-right: 1%;
+}
+.content{
+    padding-top: 20px;
+    width: 82%; /* Content com 80% da largura */
+    margin-left: 18%; 
+}
+.login-card {
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+.header{
+    margin-left: 1%;
+    width: 98%;
+    height: 70px;
+    background-color: #11253ae0;
+    border-radius: 5px;
+}
+.sp-red{
+    color: red;
+}
+.sp-green{
+    color: green;
+}
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18%;
+    background-color: #11253ae0;
+    padding: 15px;
+}
+.title-sidebar{
+    color: #ffffff;
+}
+.hr-sidebar{
+    color: #abb4be;
+}
+.img-size-2{
+    width: 80px;
+    height: 80px;
+}
+.nav-link {
+    border-radius: 12px;
+    display: flex;
+    align-items: center; /* Alinha o ícone e o texto verticalmente */
+    padding: 10px;
+    text-decoration: none; /* Remove o sublinhado do link */
+    color: #ffffff; /* Cor do texto do link */
+    font-size: 16px; /* Ajusta o tamanho da fonte do link */
+}
+
+.nav-link i {
+    margin-right: 10px; /* Espaço entre o ícone e o texto */
+    font-size: 1.2rem; /* Ajusta o tamanho do ícone */
+    color: #798696; /* Cor do ícone */
+}
+
+.nav-item {
+    list-style: none !important; /* Remove os bullets da lista */
+    margin-bottom: 10px;
+}
+
+/* Opcional: Estiliza o link quando o mouse passa sobre ele */
+.nav-link:hover{
+    border-radius: 12px;
+    background-color: #f8f9fa; /* Cor de fundo ao passar o mouse */
+    color: #0056b3; /* Cor do texto ao passar o mouse */
+}
+
+.active {
+    border-radius: 12px;
+    background-color: #f8f9fa !important; /* Cor de fundo do item ativo */
+    color: #0056b3; /* Cor do texto do item ativo */
+}
+
+.icon-color{
+    color: #ffffff;
+    margin-left: 20px;
+}
+.navbar-text{
+    margin-left: 10px;
+    color: #ffffff !important;
+}
+
+.tables td, .tables th {
+    padding: 0.6rem !important; /* Ajuste o valor conforme necessário */
+}
+
+.ml-2{
+    margin-left: 20px !important;
+}
+.text-user-profile{
+    color: #ffffff;
+    margin-right: 10px;
+    letter-spacing: 1px;
+}
