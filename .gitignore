@@ -1,0 +1,50 @@
+# Python
+*.py[cod]
+__pycache__/
+*.pyo
+*.pyd
+
+# Ambiente virtual
+venv/
+.env
+.venv/
+env/
+.env.local
+.env.production
+.env.development
+
+# Arquivos de configuração de IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Banco de dados
+db.sqlite3
+*.sqlite3
+
+# Arquivos de log
+*.log
+
+# Arquivos de cache
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de mídia
+media/
+staticfiles/
+
+# Arquivos gerados por ferramentas de empacotamento
+*.egg
+*.whl
+
+# Configurações de segurança
+secret_key.txt
